@@ -1,4 +1,4 @@
-name: Deploy Jekyll site to GitHub Pages
+name: Validate Jekyll build
 
 on:
   push:
@@ -7,12 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: github-pages
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -20,16 +14,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Enable GitHub Pages with Actions source
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          payload="$(mktemp)"
-          printf '%s' '{"build_type":"workflow"}' > "$payload"
-          gh api --method POST "/repos/${GITHUB_REPOSITORY}/pages" --input "$payload" \
-            || gh api --method PUT "/repos/${GITHUB_REPOSITORY}/pages" --input "$payload"
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -41,19 +25,3 @@ jobs:
         run: bundle exec jekyll build --destination ./_site
         env:
           JEKYLL_ENV: production
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./_site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
