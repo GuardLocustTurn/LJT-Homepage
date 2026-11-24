@@ -58,7 +58,7 @@ Publications
   Jinghan Zhang, Shiqi Chen, Junteng Liu, and Junxian He.
   *NeurIPS 2023*, 2023. Co-author.
 
-For a formatted publication list, see the [Publications](/publications/) page.
+For a formatted publication list, see the [Publications]({{ site.baseurl }}/publications/) page.
 
 Skills
 ======
